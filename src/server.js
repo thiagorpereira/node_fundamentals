@@ -1,34 +1,24 @@
 import http from 'node:http' //CommonJS => import/export => ESModules
-import { randomUUID } from 'node:crypto'
+
 import { json } from './middlewares/json.js'
-import { Database } from './database.js'
-
-const database = new Database()
-
-
+import { routes } from './routes.js'
 
 const server = http.createServer(async(req, res) => {
     const { method, url } = req
 
     await json(req, res)
     
-    if(method === 'GET' && url === '/users') {
-        return res
-        .end(JSON.stringify(database.select('users')))
-    }
+    // if(method === 'GET' && url === '/users') {
+
+    // }
     
-    if (method === 'POST' && url === '/users') {
-        console.log("FOI1")
-        const {name, email} = req.body
+    // if (method === 'POST' && url === '/users') {
 
-        database.insert('users', {
-            id: randomUUID(),
-            name,
-            email
-        })
-
-        return res.writeHead(201).end()
-    }
+    // }
+    const route = routes.find(route => {
+        return route.method === method && route.path === url
+    })
+    console.log(route)
 
     return res.writeHead(404).end()
 
